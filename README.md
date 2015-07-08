@@ -24,11 +24,19 @@ Utility scripts for chainer imagenet.
 
  Inspect image using trained model
 
+## Requirements
+
+- Chainer http://chainer.org
+- NVIDIA CUDA Technology GPU and drivers 
+
+## Usage (Japanese)
+
+- http://d.hatena.ne.jp/shi3z/20150709/1436397615
+
 ## Licence
 
 MIT Licence
 
 ## See also
 
-- http://chainer.org
 - http://hi-king.hatenablog.com/entry/2015/06/11/021144
