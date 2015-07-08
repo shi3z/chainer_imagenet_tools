@@ -30,5 +30,5 @@ MIT Licence
 
 ## See also
 
-http://chainer.org
-http://hi-king.hatenablog.com/entry/2015/06/11/021144
+- http://chainer.org
+- http://hi-king.hatenablog.com/entry/2015/06/11/021144
