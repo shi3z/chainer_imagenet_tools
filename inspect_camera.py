@@ -1,12 +1,6 @@
 #!/usr/bin/env python
-"""Example code of evaluating a Caffe reference model for ILSVRC2012 task.
-
-Prerequisite: To run this example, crop the center of ILSVRC2012 validation
-images and scale them to 256x256, and make a list of space-separated CSV each
-column of which contains a full path to an image at the fist column and a zero-
-origin label at the second column (this format is same as that used by Caffe's
-ImageDataLayer).
-
+"""
+Realtime image inspection 
 """
 from __future__ import print_function
 import argparse
@@ -27,7 +21,6 @@ from chainer.functions import caffe
 
 parser = argparse.ArgumentParser(
     description='Evaluate a Caffe reference model on ILSVRC2012 dataset')
-parser.add_argument('image', help='Path to inspection image file')
 parser.add_argument('model_type', choices=('alexnet', 'caffenet', 'googlenet'),
                     help='Model type (alexnet, caffenet, googlenet)')
 parser.add_argument('model', help='Path to the pretrained Caffe model')
