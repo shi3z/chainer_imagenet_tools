@@ -65,16 +65,12 @@ model.to_gpu()
 cropwidth = 256 - model.insize
 
 img = read_image(args.image)
-x_batch = np.ndarray(
+x = np.ndarray(
         (1, 3, model.insize, model.insize), dtype=np.float32)
-x_batch[0]=img
-y_batch = np.ndarray((1,), dtype=np.int32)
-y_batch[0]=10
+x[0]=img
 
-label=1
-x_batch=cuda.to_gpu(x_batch)
-y_batch=cuda.to_gpu(y_batch)
-score = model.predict(x_batch)
+x=cuda.to_gpu(x)
+score = model.predict(x)
 score=cuda.to_cpu(score.data)
 
 categories = np.loadtxt("labels.txt", str, delimiter="\t")
@@ -84,4 +80,3 @@ prediction = zip(score[0].tolist(), categories)
 prediction.sort(cmp=lambda x, y: cmp(x[0], y[0]), reverse=True)
 for rank, (score, name) in enumerate(prediction[:top_k], start=1):
     print('#%d | %s | %4.1f%%' % (rank, name, score * 100))
-
