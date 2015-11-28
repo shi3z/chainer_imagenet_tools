@@ -24,6 +24,10 @@ Utility scripts for chainer imagenet.
 
  Inspect image using trained model
 
+- visualizer.py
+
+ Visualize layers of neural network
+
 ## Requirements
 
 - Chainer http://chainer.org

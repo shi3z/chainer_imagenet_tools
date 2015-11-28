@@ -4,7 +4,6 @@ import subprocess
 
 def cmd(cmd):
 	return commands.getoutput(cmd)
-#   Macだとsubprocessがうまく動かないので推奨されてないけどcommands.getoutputで
 #	p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 #	p.wait()
 #	stdout, stderr = p.communicate()
