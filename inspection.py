@@ -20,14 +20,22 @@ import time
 import numpy as np
 from PIL import Image
 
+
 import six
-import six.moves.cPickle as pickle
+#import six.moves.cPickle as pickle
+import cPickle as pickle
 from six.moves import queue
 
-from chainer import cuda
-from chainer import optimizers
+import chainer
+import matplotlib.pyplot as plt
+import numpy as np
+import math
+import chainer.functions as F
+import chainer.links as L
+from chainer.links import caffe
+from matplotlib.ticker import * 
+from chainer import serializers
 
-import nin
 
 
 parser = argparse.ArgumentParser(
@@ -37,6 +45,7 @@ parser.add_argument('--model','-m',default='model', help='Path to model file')
 parser.add_argument('--mean', default='mean.npy',
                     help='Path to the mean file (computed by compute_mean.py)')
 args = parser.parse_args()
+
 
 def read_image(path, center=False, flip=False):
   image = np.asarray(Image.open(path)).transpose(2, 0, 1)
@@ -55,28 +64,41 @@ def read_image(path, center=False, flip=False):
   else:
     return image
 
+import nin
+
 mean_image = pickle.load(open(args.mean, 'rb'))
 
-cuda.init(0)
 
-
-model = pickle.load(open(args.model,'rb'))
-model.to_gpu()
+model = nin.NIN()
+serializers.load_hdf5("gpu1out.h5", model)
 cropwidth = 256 - model.insize
+model.to_cpu()
+
+
+def predict(net, x):
+    h = F.max_pooling_2d(F.relu(net.mlpconv1(x)), 3, stride=2)
+    h = F.max_pooling_2d(F.relu(net.mlpconv2(h)), 3, stride=2)
+    h = F.max_pooling_2d(F.relu(net.mlpconv3(h)), 3, stride=2)
+    h = net.mlpconv4(F.dropout(h, train=net.train))
+    h = F.reshape(F.average_pooling_2d(h, 6), (x.data.shape[0], 1000))
+    return F.softmax(h)
+
+#setattr(model, 'predict', predict)
 
 img = read_image(args.image)
 x = np.ndarray(
         (1, 3, model.insize, model.insize), dtype=np.float32)
 x[0]=img
+x = chainer.Variable(np.asarray(x), volatile='on')
 
-x=cuda.to_gpu(x)
-score = model.predict(x)
-score=cuda.to_cpu(score.data)
+score = predict(model,x)
+#score=cuda.to_cpu(score.data)
 
 categories = np.loadtxt("labels.txt", str, delimiter="\t")
-print(type(score.data))
+
 top_k = 20
-prediction = zip(score[0].tolist(), categories)
+prediction = zip(score.data[0].tolist(), categories)
 prediction.sort(cmp=lambda x, y: cmp(x[0], y[0]), reverse=True)
 for rank, (score, name) in enumerate(prediction[:top_k], start=1):
     print('#%d | %s | %4.1f%%' % (rank, name, score * 100))
+
